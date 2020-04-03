@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Categoria implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -19,6 +21,7 @@ public class Categoria implements Serializable {
 	private Integer id;
 	private String nome;
 	
+	@JsonManagedReference //para evitar a referencia ciclica so a categoria pega os seus produtos e mostra dentro dela
 	@ManyToMany(mappedBy="categorias") //o mapped by diz qual o atr na outra tabela que ta fazendo essa relacao pra n ter que fazer de novo
 	private List<Produto> produtos = new ArrayList<>();
 	
