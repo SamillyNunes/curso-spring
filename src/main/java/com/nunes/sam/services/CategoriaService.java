@@ -22,5 +22,10 @@ public class CategoriaService {
 				"Objeto não encontrado! Id:"+id+", Tipo: "+Categoria.class.getName())); //Nesse caso, para retornar nulo se nao tiver encontrado, coloca o orelse(null) 
 				
 	}
+	
+	public Categoria insert(Categoria obj) {
+		obj.setId(null); //so pra garantir que tenha oo id nulo
+		return repo.save(obj);
+	}
 
 }
