@@ -15,7 +15,7 @@ public class CategoriaService {
 	@Autowired 
 	private CategoriaRepository repo;
 	
-	public Categoria buscar(Integer id) {
+	public Categoria find(Integer id) {
 		//Busca no repositorio pelo id. O optional eh  para encapsular a questao de ser um obj instanciado ou nao. Feito para eliminar o problema do nulo.
 		Optional<Categoria> obj = repo.findById(id); 
 		return obj.orElseThrow(()-> new ObjectNotFoundException( //esta levantando uma excecao personalizada caso n encontre
@@ -26,6 +26,11 @@ public class CategoriaService {
 	public Categoria insert(Categoria obj) {
 		obj.setId(null); //so pra garantir que tenha oo id nulo
 		return repo.save(obj);
+	}
+	
+	public Categoria update(Categoria obj) {
+		find(obj.getId()); //ja chama antes pq se o id for nulo vai lancar uma excecao
+		return repo.save(obj); //eh a mesma coisa para o inserir, a diferença eh q quando o id eh nulo ele insere e quando nao ele atualiza
 	}
 
 }

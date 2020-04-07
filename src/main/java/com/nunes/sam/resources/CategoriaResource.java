@@ -1,8 +1,6 @@
 package com.nunes.sam.resources;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +22,9 @@ public class CategoriaResource {
 	private CategoriaService service;
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.GET) //o value significa que o endpoint	agora tem que receber o id para o retorna-lo
-	public ResponseEntity<?> find(@PathVariable Integer id) { //o path variable eh para que o spring saiba que o id q vem no endpoint eh o que eh passado nesse metodo
+	public ResponseEntity<Categoria> find(@PathVariable Integer id) { //o path variable eh para que o spring saiba que o id q vem no endpoint eh o que eh passado nesse metodo
 		
-		Categoria obj = service.buscar(id);
+		Categoria obj = service.find(id);
 		
 		//o ok eh p/ operacao feita com sucesso e o corpo vai ser o obj
 		return ResponseEntity.ok().body(obj); 
@@ -42,6 +40,14 @@ public class CategoriaResource {
 					.path("/{id}").buildAndExpand(obj.getId()).toUri(); //o from currente request vai pegar a requisicao atual, e logo depois a gente add o /id
 		
 		return ResponseEntity.created(uri).build();
+	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id){
+		obj.setId(id); //pra garantir so 
+		obj = service.update(obj);
+		return ResponseEntity.noContent().build();
+		
 	}
 
 }
