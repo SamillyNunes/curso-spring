@@ -1,6 +1,8 @@
 package com.nunes.sam.resources;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nunes.sam.domain.Categoria;
+import com.nunes.sam.dto.CategoriaDTO;
 import com.nunes.sam.services.CategoriaService;
 
 @RestController
@@ -56,6 +59,21 @@ public class CategoriaResource {
 		
 		return ResponseEntity.noContent().build();
 		
+		
+	}
+	
+	@RequestMapping(method=RequestMethod.GET) 
+	public ResponseEntity<List<CategoriaDTO>> findAll() { //pegando as categorias dtos que sera apenas o necessario
+		
+		List<Categoria> list = service.findAll();
+		
+		//veja que o stream eh para percorrer a lista, o map eh para dizer uma funcao q vai manipular cada elemento da lista
+		//nesse caso, para elemento na lista ele sera passado para a categoriadto 
+		//e no fim eh convertida novamente para uma lista
+		List<CategoriaDTO> listDTO = list.stream().map(obj->new CategoriaDTO(obj)).collect(Collectors.toList());
+		
+		//o ok eh p/ operacao feita com sucesso e o corpo vai ser o obj
+		return ResponseEntity.ok().body(listDTO); 
 		
 	}
 
