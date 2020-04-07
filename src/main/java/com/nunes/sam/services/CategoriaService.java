@@ -3,10 +3,12 @@ package com.nunes.sam.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.nunes.sam.domain.Categoria;
 import com.nunes.sam.repositories.CategoriaRepository;
+import com.nunes.sam.services.exceptions.DataIntegrityException;
 import com.nunes.sam.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -31,6 +33,16 @@ public class CategoriaService {
 	public Categoria update(Categoria obj) {
 		find(obj.getId()); //ja chama antes pq se o id for nulo vai lancar uma excecao
 		return repo.save(obj); //eh a mesma coisa para o inserir, a diferença eh q quando o id eh nulo ele insere e quando nao ele atualiza
+	}
+	
+	public void delete(Integer id) {
+		find(id);
+		try {
+			repo.deleteById(id);
+		} catch(DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível deletar excluir uma categoria que possui produtos.");
+		}
+		
 	}
 
 }
