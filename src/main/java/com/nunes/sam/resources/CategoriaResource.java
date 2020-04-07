@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -73,6 +75,23 @@ public class CategoriaResource {
 		List<CategoriaDTO> listDTO = list.stream().map(obj->new CategoriaDTO(obj)).collect(Collectors.toList());
 		
 		//o ok eh p/ operacao feita com sucesso e o corpo vai ser o obj
+		return ResponseEntity.ok().body(listDTO); 
+		
+	}
+	
+	//o requestparam eh para tornar os parametros opcionais, alem de nao ter que fazer /pages/1/20/..., nesse caso
+	//vai ficar /pages?pages=0&linesPerPage=20&...
+	@RequestMapping(value="/page",method=RequestMethod.GET) 
+	public ResponseEntity<Page<CategoriaDTO>> findPage(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, //24 pq eh multiplo de 1, 2 3 e 4
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String directionOrder) { //asc eh ascendente 
+		
+		Page<Categoria> list = service.findPage(page,linesPerPage,orderBy,directionOrder);
+		
+		Page<CategoriaDTO> listDTO = list.map(obj->new CategoriaDTO(obj));
+		
 		return ResponseEntity.ok().body(listDTO); 
 		
 	}
