@@ -36,8 +36,9 @@ public class CategoriaService {
 	}
 	
 	public Categoria update(Categoria obj) {
-		find(obj.getId()); //ja chama antes pq se o id for nulo vai lancar uma excecao
-		return repo.save(obj); //eh a mesma coisa para o inserir, a diferença eh q quando o id eh nulo ele insere e quando nao ele atualiza
+		Categoria newObj = find(obj.getId()); //ja chama antes pq se o id for nulo vai lancar uma excecao
+		updateData(newObj,obj); //usado para atualizar apenas os dados que vierem na requisicao, e nao todos (caso alguem venha nulo)
+		return repo.save(newObj); //eh a mesma coisa para o inserir, a diferença eh q quando o id eh nulo ele insere e quando nao ele atualiza
 	}
 	
 	public void delete(Integer id) {
@@ -65,6 +66,11 @@ public class CategoriaService {
 	
 	public Categoria fromDTO(CategoriaDTO objDTO) {
 		return new Categoria(objDTO.getId(),objDTO.getNome());
+	}
+	
+	private void updateData(Categoria newObj, Categoria obj) {
+		newObj.setNome(obj.getNome());
+		
 	}
 
 }
