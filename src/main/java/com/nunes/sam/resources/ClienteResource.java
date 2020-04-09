@@ -1,5 +1,6 @@
 package com.nunes.sam.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nunes.sam.domain.Cliente;
 import com.nunes.sam.dto.ClienteDTO;
+import com.nunes.sam.dto.ClienteNewDTO;
 import com.nunes.sam.services.ClienteService;
 
 @RestController
@@ -33,6 +36,19 @@ public class ClienteResource {
 		
 		return ResponseEntity.ok().body(obj);
 		
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDTO){ //quando inserir algo com sucesso vai retornar com o corpo vazio (por isso o void). o RequestBody faz com q o json seja convertido em objeto java automaticamente
+		
+		Cliente obj = service.fromDTO(objDTO);
+		obj = service.insert(obj);
+		
+		//abaixo uma boa pratica para retornar a url do novo objeto quandro cria-lo
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+					.path("/{id}").buildAndExpand(obj.getId()).toUri(); //o from currente request vai pegar a requisicao atual, e logo depois a gente add o /id
+		
+		return ResponseEntity.created(uri).build();
 	}
 	
 
