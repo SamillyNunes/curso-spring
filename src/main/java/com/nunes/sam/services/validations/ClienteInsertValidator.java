@@ -6,12 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.nunes.sam.domain.Cliente;
 import com.nunes.sam.domain.enums.TipoCliente;
 import com.nunes.sam.dto.ClienteNewDTO;
+import com.nunes.sam.repositories.ClienteRepository;
 import com.nunes.sam.resources.exceptions.FieldMessage;
 import com.nunes.sam.services.validations.utils.BR;
 
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
+	
+	@Autowired
+	private ClienteRepository repo;
+	
 	@Override
 	public void initialize(ClienteInsert ann) { //metodo para alguma programacao de inicicializacao	
 	}
@@ -31,6 +39,10 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 			list.add(new FieldMessage("cpfOuCnpj", "CNPJ Inválido"));
 		}
 		
+		Cliente aux = repo.findByEmail(objDto.getEmail());
+		if(aux!=null) {
+			list.add(new FieldMessage("email", "Email já existente."));
+		}
 		
 		//se tiver alguem na lista, entao devera ser adicionado esses erros no framework (padrao)
 		for (FieldMessage e : list) {

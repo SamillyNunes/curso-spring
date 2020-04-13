@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.Length;
 import com.nunes.sam.services.validations.ClienteInsert;
 
 //Um DTO especial para enviar ao mesmo tepo um cliente, telefone e endereço
-@ClienteInsert
+@ClienteInsert	
 public class ClienteNewDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
