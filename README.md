@@ -13,5 +13,6 @@ ferramentas como JPA, REST, entre outros (à implementar). Está sendo implement
 
 ## Para mais informações
 
+- Github: https://github.com/SamillyNunes
 - Linkedin: https://www.linkedin.com/in/samilly-nunes-9b7a68199/
 - Email: samilly.nunes@arapiraca.ufal.br
