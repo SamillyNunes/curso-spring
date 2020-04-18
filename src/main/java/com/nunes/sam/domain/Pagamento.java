@@ -11,10 +11,12 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.nunes.sam.domain.enums.EstadoPagamento;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED) //para dizer que a estrategia de salvar sera criar uma tabela pra cada ao inves de uma unica
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,include=JsonTypeInfo.As.PROPERTY,property="@type") //essa anotacao da dizendo que a classe pagamento tera um atrb adicional chamado @type
 public abstract class Pagamento  implements Serializable{
 	private static final long serialVersionUID = 1L;
 	

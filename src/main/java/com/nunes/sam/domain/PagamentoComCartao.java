@@ -2,9 +2,11 @@ package com.nunes.sam.domain;
 
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.nunes.sam.domain.enums.EstadoPagamento;
 
 @Entity
+@JsonTypeName("pagamentoComCartao")
 public class PagamentoComCartao extends Pagamento{
 	private static final long serialVersionUID = 1L; //nao precisa do implements serializable pq ja tem na superclasse
 	
