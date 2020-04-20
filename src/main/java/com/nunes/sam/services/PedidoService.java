@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nunes.sam.domain.ItemPedido;
 import com.nunes.sam.domain.PagamentoComBoleto;
@@ -31,6 +32,9 @@ public class PedidoService {
 	private ProdutoService produtoService;
 	
 	@Autowired
+	private ClienteService clienteService;
+	
+	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 	
 	public Pedido find(Integer id) {
@@ -41,9 +45,13 @@ public class PedidoService {
 				
 	}
 	
+	@Transactional
 	public Pedido insert(Pedido obj) {
 		obj.setId(null);
 		obj.setInstante(new Date()); //colocar o instante atual
+		
+		obj.setCliente(clienteService.find(obj.getCliente().getId()));
+		
 		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE); //ta acabando de inserir, entao ta pendente
 		obj.getPagamento().setPedido(obj);
 		if(obj.getPagamento() instanceof PagamentoComBoleto) {
@@ -57,13 +65,15 @@ public class PedidoService {
 		
 		for (ItemPedido ip : obj.getItens()) {
 			ip.setDesconto(0); //como nesse caso nao esta sendo considerado o desconto
-			ip.setPreco(produtoService.find(ip.getProduto().getId()).getPreco()); //procurando o id do produto e pegando o preco
+			ip.setProduto(produtoService.find(ip.getProduto().getId()));
+			ip.setPreco(ip.getProduto().getPreco()); //procurando o id do produto e pegando o preco
 			ip.setPedido(obj);
 			
 			
 		}
 		
 		itemPedidoRepository.saveAll(obj.getItens());
+		System.out.println(obj);
 		return obj;	
 	}
 

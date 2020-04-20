@@ -1,6 +1,8 @@
 package com.nunes.sam.domain;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -106,6 +108,23 @@ public class ItemPedido implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt","BR")); //instancia de dinheiro
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(this.getProduto().getNome());
+		builder.append(", Qte: ");
+		builder.append(this.getQuantidade());
+		builder.append(", Preço unitário: ");
+		builder.append(nf.format(this.getPreco())); //formatando para a moeda real
+		builder.append(", Subtotal: ");
+		builder.append(nf.format(this.getSubtotal()));
+		builder.append("\n");
+
+		return builder.toString();
 	}
 	 
 	
