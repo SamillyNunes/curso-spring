@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.nunes.sam.domain.Categoria;
 import com.nunes.sam.domain.Pedido;
-import com.nunes.sam.dto.CategoriaDTO;
 import com.nunes.sam.services.PedidoService;
 
 @RestController

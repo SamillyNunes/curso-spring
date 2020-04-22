@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title th:remove="all">Order Confirmation</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<style type="text/css">
+		
+		.fundo{
+			background-color: rgb(144, 238, 144);
+			padding: 1%;
+		}
+		
+		.detalhes{
+			font-weight:bold;
+		}
+		
+		.total{
+			font-weight:bold;
+			color: white;
+			background-color: green;
+			
+		}
+		
+		.marca{
+			color:orange;
+			font-weight:bold;
+		}
+		
+		.rodape{
+			text-align:center;
+			background-color:gray;
+			padding: 2%;
+			
+		}
+		
+		.rodape h3{
+			color:white;
+		}
+		
+		.table{
+			padding:2%;
+			border:1px;
+			
+		}
+		
+		.table th{
+			background-color: gray;
+			color: white;
+		}
+	</style>
+	
+</head>
+<body class="fundo">
+	<div>
+		<h2>
+			Nós da <span class="marca">@toDev</span> agradecemos a você, senhor(a) <span th:text="${pedido.cliente.nome}"></span>, por escolher os nossos
+			produtos. Desejamos que curta todos os nossos serviços e volte sempre! =]<br>
+			Aqui vão alguns detalhes:
+		</h2>
+		<p>
+			<span class="detalhes">Pedido número: </span> 
+			<span th:text="${pedido.id}"> </span>
+		<p>
+		<p>
+			<span class="detalhes"> Instante: </span> 
+			<span th:text="${#dates.format(pedido.instante, 'dd/MM/yyyy hh:mm')}"></span>
+		</p>
+		<p>
+			<span class="detalhes"> Cliente:</span> 
+			<span th:text="${pedido.cliente.nome}"></span>
+		</p>
+		<p>
+			<span class="detalhes"> Situação do pagamento: </span> 
+			<span th:text="${pedido.pagamento.estado.descricao}"></span>
+		</p>
+		<h3>Produtos adquiridos:</h3>
+		<table class="table">
+			<tr>
+				<th>Produto</th>
+				<th>Quantidade</th>
+				<th>Preço unitário</th>
+				<th>Subtotal</th>
+			</tr>
+			<tr th:each="item : ${pedido.itens}">
+				<td th:text="${item.produto.nome}">nome</td>
+				<td th:text="${item.quantidade}">quantidade</td>
+				<td
+					th:text="${#numbers.formatDecimal(item.preco, 0, 'POINT', 2,
+'COMMA')}">preco</td>
+				<td
+					th:text="${#numbers.formatDecimal(item.subtotal, 0, 'POINT', 2,
+'COMMA')}">subTotal</td>
+			</tr>
+		</table>
+		
+		<h3>
+			<span class="total"> Valor total:</span> 
+			<span th:text="${#numbers.formatDecimal(pedido.valorTotal, 0, 'POINT', 2, 'COMMA')}"></span>
+		</h3>
+		
+		<div class="rodape">
+			<h3><hr>toDev Inc<hr></h3>
+			<h3>Instagram: <a  class="marca">@toDev</a></h4>
+			<h3>Site: <a th:href="www.todev.com.br" >www.todev.com.br</a></h4>
+		</div>
+	</div>
+</body>
+</html>

@@ -77,7 +77,7 @@ public class PedidoService {
 		
 		itemPedidoRepository.saveAll(obj.getItens());
 
-		emailService.sendOrderConfirmationEmail(obj); //aqui esta usando a interface, mas nas configuracoes do perfil respectivo dirá quem sera instanciado para essa interface
+		emailService.sendOrderConfirmationHtmlEmail(obj); //aqui esta usando a interface, mas nas configuracoes do perfil respectivo dirá quem sera instanciado para essa interface
 		
 		return obj;	
 	}
