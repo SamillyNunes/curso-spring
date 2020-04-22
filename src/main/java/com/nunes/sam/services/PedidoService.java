@@ -37,6 +37,9 @@ public class PedidoService {
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	public Pedido find(Integer id) {
 		//Busca no repositorio pelo id. O optional eh  para encapsular a questao de ser um obj instanciado ou nao. Feito para eliminar o problema do nulo.
 		Optional<Pedido> obj = repo.findById(id); 
@@ -73,7 +76,9 @@ public class PedidoService {
 		}
 		
 		itemPedidoRepository.saveAll(obj.getItens());
-		System.out.println(obj);
+
+		emailService.sendOrderConfirmationEmail(obj); //aqui esta usando a interface, mas nas configuracoes do perfil respectivo dirá quem sera instanciado para essa interface
+		
 		return obj;	
 	}
 
