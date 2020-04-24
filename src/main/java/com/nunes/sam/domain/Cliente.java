@@ -5,18 +5,21 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nunes.sam.domain.enums.Perfil;
 import com.nunes.sam.domain.enums.TipoCliente;
 
 @Entity
@@ -43,11 +46,17 @@ public class Cliente implements Serializable{
 	@CollectionTable(name="TELEFONE")
 	private Set<String> telefones = new HashSet<>(); //no caso de um Set (conjunto), ele n permite repeticoes
 	
+	@ElementCollection(fetch=FetchType.EAGER) //esse fetch diz que toda vez que buscar um cliente automaticamente tera que vir o perfil dele junto, obrigatoriamente
+	@CollectionTable(name="PERFIS")
+	private Set<Integer> perfis= new HashSet<>();
+	
 	@JsonIgnore
 	@OneToMany(mappedBy="cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
 	
-	public Cliente() {}
+	public Cliente() {
+		this.addPerfil(Perfil.CLIENTE); //todo o cliente por padrao ja sera do perfil CLIENTE, e apenas alguns serao tambem ADMINS
+	}
 
 	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha) {
 		super();
@@ -57,6 +66,7 @@ public class Cliente implements Serializable{
 		this.cpfOuCnpj = cpfOuCnpj;
 		this.tipo = (tipo==null) ? null : tipo.getCodigo();
 		this.senha=senha;
+		this.addPerfil(Perfil.CLIENTE); //todo o cliente por padrao ja sera do perfil CLIENTE, e apenas alguns serao tambem ADMINS
 	}
 
 	public Integer getId() {
@@ -109,6 +119,14 @@ public class Cliente implements Serializable{
 
 	public Set<String> getTelefones() {
 		return telefones;
+	}
+	
+	public Set<Perfil> getPerfis(){
+		return perfis.stream().map(x->Perfil.toEnum(x)).collect(Collectors.toSet());
+	}
+	
+	public void addPerfil(Perfil perfil) {
+		perfis.add(perfil.getCodigo());
 	}
 
 	public void setTelefones(Set<String> telefones) {

@@ -20,6 +20,7 @@ import com.nunes.sam.domain.PagamentoComCartao;
 import com.nunes.sam.domain.Pedido;
 import com.nunes.sam.domain.Produto;
 import com.nunes.sam.domain.enums.EstadoPagamento;
+import com.nunes.sam.domain.enums.Perfil;
 import com.nunes.sam.domain.enums.TipoCliente;
 import com.nunes.sam.repositories.CategoriaRepository;
 import com.nunes.sam.repositories.CidadeRepository;
@@ -127,16 +128,23 @@ public class DBService {
 		estadoRepository.saveAll(Arrays.asList(est1,est2));
 		cidadeRepository.saveAll(Arrays.asList(c1,c2,c3));
 		
-		Cliente cli1 = new Cliente(null, "Maria Silva", "samilly.nunes@arapiraca.ufal.br", "325415", TipoCliente.PESSOA_FISICA,bCryptPasswordEncoder.encode("456"));
+		Cliente cli1 = new Cliente(null, "Maria Silva", "samilly.nunes@arapiraca.ufal.br", "21121272096", TipoCliente.PESSOA_FISICA,bCryptPasswordEncoder.encode("456"));
 		cli1.getTelefones().addAll(Arrays.asList("2547852","34617641"));
+		
+		Cliente cli2 = new Cliente(null, "Sam Nunes", "samillynunes19@gmail.com", "16842207002", TipoCliente.PESSOA_FISICA,bCryptPasswordEncoder.encode("789"));
+		cli2.addPerfil(Perfil.ADMIN);
+		cli2.getTelefones().addAll(Arrays.asList("82996431097","34617641"));
+		
 		
 		Endereco e1 = new Endereco(null, "Rua Flores","300","Apto 303", "Jardim", "34856985", cli1, c1);
 		Endereco e2 = new Endereco(null, "Av Barro Branco","50","Apto 2", "Centro", "348547985", cli1, c2);
+		Endereco e3 = new Endereco(null, "R Pedrinhas","90","Casa", "Centro", "348547985", cli2, c1);
 		
 		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 		
-		clienteRepository.saveAll(Arrays.asList(cli1));
-		enderecoRepository.saveAll(Arrays.asList(e1,e2));
+		clienteRepository.saveAll(Arrays.asList(cli1,cli2));
+		enderecoRepository.saveAll(Arrays.asList(e1,e2,e3));
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
