@@ -7,21 +7,32 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.nunes.sam.security.JWTAuthenticationFilter;
+import com.nunes.sam.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
+	private UserDetailsService userDetailsService; //foi injetada uma interface, o spring sozinho procura uma implementacao dela
+	
+	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private JWTUtil jwtUtil;
 	
 	//pra dizer quem ta liberado de acessar
 	private static final String[] PUBLIC_MATCHERS = {
@@ -52,7 +63,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.antMatchers(PUBLIC_MATCHERS).permitAll()
 			.anyRequest().authenticated(); //pra todo o resto sera exigida a autenticacao
 		
+		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //pra assegurar que o backend nao vai criar sessao de usuario
+	}
+	
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception { //mecanismo usado pra informar o userDetailsService e o encoder da senha
+		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
 	}
 	
 	//permitindo o acesso por multiplas fontes com as configuracoes basicas
