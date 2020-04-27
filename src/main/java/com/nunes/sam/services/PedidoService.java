@@ -4,9 +4,13 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nunes.sam.domain.Cliente;
 import com.nunes.sam.domain.ItemPedido;
 import com.nunes.sam.domain.PagamentoComBoleto;
 import com.nunes.sam.domain.Pedido;
@@ -14,6 +18,8 @@ import com.nunes.sam.domain.enums.EstadoPagamento;
 import com.nunes.sam.repositories.ItemPedidoRepository;
 import com.nunes.sam.repositories.PagamentoRepository;
 import com.nunes.sam.repositories.PedidoRepository;
+import com.nunes.sam.security.UserSpringSecurity;
+import com.nunes.sam.services.exceptions.AuthorizationException;
 import com.nunes.sam.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -80,6 +86,20 @@ public class PedidoService {
 		emailService.sendOrderConfirmationHtmlEmail(obj); //aqui esta usando a interface, mas nas configuracoes do perfil respectivo dirá quem sera instanciado para essa interface
 		
 		return obj;	
+	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String directionOrder){
+		
+		UserSpringSecurity user = UserService.authenticated();
+		
+		if(user==null) { //se nao tiver ninguem logado, ele nega o acesso pq o cliente so pode pegar os dele
+			throw new AuthorizationException("Acesso negado"); 
+		} 
+		
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(directionOrder), orderBy);
+		Cliente cliente = clienteService.find(user.getId());
+		
+		return repo.findByCliente(cliente, pageRequest);
 	}
 
 }
