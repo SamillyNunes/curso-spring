@@ -59,7 +59,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		String username = ((UserSpringSecurity) authResult.getPrincipal()).getUsername();
 		String token = jwtUtil.generateToken(username);
-		response.addHeader("Authorization", "Bearer" +token );
+		response.addHeader("Authorization", "Bearer " +token ); //Bearer + token eh padrao para o retorno do token quando autentica
 	}
 	
 	//classe usada pra que seja o erro 401 ao inves do 403
