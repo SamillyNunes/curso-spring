@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +63,7 @@ public class ClienteResource {
 		
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')") //eu nao quero que um cliente possa deletar o registro dele do meu banco
 	@RequestMapping(value="/{id}",method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
@@ -71,6 +73,7 @@ public class ClienteResource {
 		
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(method=RequestMethod.GET) 
 	public ResponseEntity<List<ClienteDTO>> findAll() { //pegando as categorias dtos que sera apenas o necessario
 		
@@ -88,6 +91,7 @@ public class ClienteResource {
 	
 	//o requestparam eh para tornar os parametros opcionais, alem de nao ter que fazer /pages/1/20/..., nesse caso
 	//vai ficar /pages?pages=0&linesPerPage=20&...
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@RequestMapping(value="/page",method=RequestMethod.GET) 
 	public ResponseEntity<Page<ClienteDTO>> findPage(
 			@RequestParam(value="page", defaultValue="0") Integer page, 

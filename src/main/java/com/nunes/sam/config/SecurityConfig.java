@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,6 +25,7 @@ import com.nunes.sam.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) //permite pre autorizar os endpoints pelos perfis
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
@@ -43,7 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	//vetor so pra leitura, para que aqueles que nao estejam logados ou nao sejam super usuarios nao possam excluir/editar
 	private static final String[] PUBLIC_MATCHERS_GET = {
 			"/produtos/**",
-			"/categorias/**",
+			"/categorias/**"
+	};
+	
+	//os endpoints que sera permitido so o post, no caso o cliente que nao tem login ainda e pode se cadastrar.
+	private static final String[] PUBLIC_MATCHERS_POST = {
 			"/clientes/**"
 	};
 	
@@ -61,6 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		
 		http.authorizeRequests()
 			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll() //ou seja, so vai permitir o get pra os caras que tao nessa lista caso sejam anonimos
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll() //ou seja, so vai permitr o POST sem login para esses caras (cliente se cadastrar no caso) 
 			.antMatchers(PUBLIC_MATCHERS).permitAll()
 			.anyRequest().authenticated(); //pra todo o resto sera exigida a autenticacao
 		
