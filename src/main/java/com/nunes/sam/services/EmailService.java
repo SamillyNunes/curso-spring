@@ -4,6 +4,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.mail.SimpleMailMessage;
 
+import com.nunes.sam.domain.Cliente;
 import com.nunes.sam.domain.Pedido;
 
 public interface EmailService { //especie de contrato pra qualquer estrateigia de envio de email utilizada
@@ -15,5 +16,7 @@ public interface EmailService { //especie de contrato pra qualquer estrateigia d
 	void sendOrderConfirmationHtmlEmail(Pedido obj);
 	
 	void sendHtmlEmail(MimeMessage msg);
+
+	void sendNewPasswordEmail(Cliente cliente, String newPass);
 	
 }
