@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.nunes.sam.services.exceptions.AuthorizationException;
 import com.nunes.sam.services.exceptions.DataIntegrityException;
 import com.nunes.sam.services.exceptions.ObjectNotFoundException;
 
@@ -39,6 +40,13 @@ public class ResourceExceptionHandler { //manipulador de excecoes dos controlado
 		}
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
+	@ExceptionHandler(AuthorizationException.class) //pra dizer que eh um tratador de excecoes o tipo objectNotFound
+	public ResponseEntity<StandardError> authorization(AuthorizationException e, HttpServletRequest request){
+		StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(),e.getMessage(),System.currentTimeMillis());
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
 	
 }

@@ -16,11 +16,14 @@ import org.springframework.stereotype.Service;
 import com.nunes.sam.domain.Cidade;
 import com.nunes.sam.domain.Cliente;
 import com.nunes.sam.domain.Endereco;
+import com.nunes.sam.domain.enums.Perfil;
 import com.nunes.sam.domain.enums.TipoCliente;
 import com.nunes.sam.dto.ClienteDTO;
 import com.nunes.sam.dto.ClienteNewDTO;
 import com.nunes.sam.repositories.ClienteRepository;
 import com.nunes.sam.repositories.EnderecoRepository;
+import com.nunes.sam.security.UserSpringSecurity;
+import com.nunes.sam.services.exceptions.AuthorizationException;
 import com.nunes.sam.services.exceptions.DataIntegrityException;
 import com.nunes.sam.services.exceptions.ObjectNotFoundException;
 
@@ -37,6 +40,14 @@ public class ClienteService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public Cliente find(Integer id) {
+		
+		//esta fazendo a verificacao para na hora que for dado um get (acessa este metodo) verificar se esse usuario pode acessar
+		//esse cliente (mesma pessoa ou o user eh admin)
+		UserSpringSecurity user = UserService.authenticated();
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado.");
+		}
+		
 		//Busca no repositorio pelo id. O optional eh  para encapsular a questao de ser um obj instanciado ou nao. Feito para eliminar o problema do nulo.
 		Optional<Cliente> obj = repo.findById(id); 
 		return obj.orElseThrow(()-> new ObjectNotFoundException( //esta levantando uma excecao personalizada caso n encontre
