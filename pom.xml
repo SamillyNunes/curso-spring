@@ -82,6 +82,19 @@
 			<version>0.9.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.11.163</version>
+		</dependency>
+		
+		<!-- Usada pra extrair de maneira +simples a extensao dos arquivos -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
 
 	</dependencies>
 
