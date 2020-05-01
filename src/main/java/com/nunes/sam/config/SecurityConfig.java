@@ -50,7 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	//os endpoints que sera permitido so o post, no caso o cliente que nao tem login ainda e pode se cadastrar.
 	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/clientes/**",
+			"/clientes",
+			"/clientes/picture",
 			"/auth/forgot/**"
 	};
 	
