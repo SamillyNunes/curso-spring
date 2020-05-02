@@ -9,8 +9,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.nunes.sam.services.exceptions.AuthorizationException;
 import com.nunes.sam.services.exceptions.DataIntegrityException;
+import com.nunes.sam.services.exceptions.FileException;
 import com.nunes.sam.services.exceptions.ObjectNotFoundException;
 
 @ControllerAdvice
@@ -45,6 +49,36 @@ public class ResourceExceptionHandler { //manipulador de excecoes dos controlado
 	@ExceptionHandler(AuthorizationException.class) //pra dizer que eh um tratador de excecoes o tipo objectNotFound
 	public ResponseEntity<StandardError> authorization(AuthorizationException e, HttpServletRequest request){
 		StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(),e.getMessage(),System.currentTimeMillis());
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
+	
+	@ExceptionHandler(FileException.class) //pra dizer que eh um tratador de excecoes o tipo objectNotFound
+	public ResponseEntity<StandardError> file(FileException e, HttpServletRequest request){
+		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(),e.getMessage(),System.currentTimeMillis());
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
+	
+	@ExceptionHandler(AmazonServiceException.class) //pra dizer que eh um tratador de excecoes o tipo objectNotFound
+	public ResponseEntity<StandardError> amazonService(AmazonServiceException e, HttpServletRequest request){
+		HttpStatus code = HttpStatus.valueOf(e.getErrorCode()); //isso pega o erro que veio da excecao 
+		
+		StandardError err = new StandardError(code.value(),e.getMessage(),System.currentTimeMillis());
+		
+		return ResponseEntity.status(code).body(err);
+	}
+	
+	@ExceptionHandler(AmazonClientException.class) //pra dizer que eh um tratador de excecoes o tipo objectNotFound
+	public ResponseEntity<StandardError> amazonClient(AmazonClientException e, HttpServletRequest request){
+		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(),e.getMessage(),System.currentTimeMillis());
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
+	
+	@ExceptionHandler(AmazonS3Exception.class) //pra dizer que eh um tratador de excecoes o tipo objectNotFound
+	public ResponseEntity<StandardError> amazonS3(AmazonS3Exception e, HttpServletRequest request){
+		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(),e.getMessage(),System.currentTimeMillis());
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
