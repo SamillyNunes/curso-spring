@@ -1,5 +1,6 @@
 package com.nunes.sam.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,9 @@ import com.nunes.sam.services.exceptions.ObjectNotFoundException;
 @Service
 public class ClienteService {
 	
+	@Value("${img.prefix.cliente.profile}")
+	private String prefix;
+	
 	@Autowired
 	private ClienteRepository repo;
 	
@@ -43,6 +48,9 @@ public class ClienteService {
 	
 	@Autowired
 	private S3Service s3Service;
+	
+	@Autowired
+	private ImageService imageService;
 	
 	public Cliente find(Integer id) {
 		
@@ -133,13 +141,11 @@ public class ClienteService {
 			throw new AuthorizationException("Acesso negado.");
 		}
 		
-		URI uri = s3Service.uploadFile(multipartFile);
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix+user.getId()+".jpg";
 		
-		Cliente cli = find(user.getId());
-		cli.setImageUrl(uri.toString());
-		repo.save(cli);
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 		
-		return uri;
 	}
 
 }
